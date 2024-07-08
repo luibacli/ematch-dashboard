@@ -68,12 +68,12 @@ const linksList = [
     link: "/users",
   },
   {
-    title: "Cashin",
+    title: "Deposits",
     icon: "payments",
     link: "/cashin",
   },
   {
-    title: "Cashout",
+    title: "Withdrawals",
     icon: "shopping_cart_checkout",
     link: "/cashout",
   },
