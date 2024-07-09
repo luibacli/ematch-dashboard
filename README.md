@@ -2,6 +2,10 @@
 
 Dashboard management for e-match application.
 
+For Demo login:
+email: admin@gmail.com
+password: admin123
+
 ## Install the dependencies
 ```bash
 yarn
