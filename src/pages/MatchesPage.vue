@@ -3,13 +3,34 @@
     <div v-if="matchLoading" class="row justify-center text-warning">
       <q-spinner-puff size="5.5em" />
     </div>
+
     <div v-else class="q-pa-md">
+      <div class="q-pa-md bg-primary">
+        <q-tabs class="bg-warning text-warning" align="justify">
+          <q-tab
+            label="Pending Matches"
+            class="bg-secondary"
+            @click="getMatchPending"
+          />
+          <q-tab
+            label="Closed Matches"
+            class="bg-secondary"
+            @click="getMatchClosed"
+          />
+          <q-tab
+            label="Open Matches"
+            class="bg-secondary"
+            @click="getMatchOpen"
+          />
+        </q-tabs>
+      </div>
       <q-table
+        title="Pending Matches"
         :columns="matchColumn"
         :rows="matchList"
         :pagination="pagination"
         row-key="id"
-        class="bg-primary text-warning"
+        class="bg-primary text-warning q-mt-md"
         separator="cell"
       >
         <template v-slot:body-cell-actions="props">
@@ -188,6 +209,8 @@ const {
 } = storeToRefs(matchStore);
 const {
   getMatchPending,
+  getMatchClosed,
+  getMatchOpen,
   openMatchPendingData,
   confirmChallengerWin,
   confirmHostWin,

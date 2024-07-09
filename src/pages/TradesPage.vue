@@ -1,5 +1,7 @@
 <template>
-  <div>This is trade page</div>
+  <q-page>
+    <div>This is trade page</div>
+  </q-page>
 </template>
 
 <script setup></script>

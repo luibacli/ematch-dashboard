@@ -4,6 +4,8 @@ import {
   getDocs,
   getDoc,
   updateDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { defineStore } from "pinia";
 import { db } from "src/boot/firebase";
@@ -139,6 +141,67 @@ export const useCashStore = defineStore("cash", {
         console.log(error);
       }
     },
+    async getPendingDeposits() {
+      this.cashinLoading = true;
+      try {
+        const collectionRef = collection(db, "cashin");
+        const q = query(collectionRef, where("status", "==", "pending"));
+
+        const pendingData = [];
+        const querySnapShot = await getDocs(q);
+        querySnapShot.forEach((doc) => {
+          return pendingData.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        this.cashinList = pendingData;
+        this.cashinLoading = false;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getApprovedDeposits() {
+      this.cashinLoading = true;
+      try {
+        const collectionRef = collection(db, "cashin");
+        const q = query(collectionRef, where("status", "==", "approved"));
+
+        const pendingData = [];
+        const querySnapShot = await getDocs(q);
+        querySnapShot.forEach((doc) => {
+          return pendingData.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        this.cashinList = pendingData;
+        console.log(this.cashinList);
+        this.cashinLoading = false;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getDeclinedDeposits() {
+      this.cashinLoading = true;
+      try {
+        const collectionRef = collection(db, "cashin");
+        const q = query(collectionRef, where("status", "==", "declined"));
+
+        const pendingData = [];
+        const querySnapShot = await getDocs(q);
+        querySnapShot.forEach((doc) => {
+          return pendingData.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        this.cashinList = pendingData;
+        this.cashinLoading = false;
+      } catch (error) {
+        console.error(error);
+      }
+    },
     openCashinRequest(item) {
       try {
         this.cashinDialog = true;
@@ -219,6 +282,73 @@ export const useCashStore = defineStore("cash", {
         this.cashoutList = cashoutData;
       } catch (error) {
         console.log(error);
+      }
+    },
+
+    async getPendingWithraws() {
+      this.cashoutLoading = true;
+      try {
+        const collectionRef = collection(db, "cashout");
+        const q = query(collectionRef, where("status", "==", "pending"));
+
+        const querySnapShot = await getDocs(q);
+
+        const docSnap = [];
+        querySnapShot.forEach((doc) => {
+          return docSnap.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+
+        this.cashoutList = docSnap;
+        this.cashoutLoading = false;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getApprovedWithraws() {
+      this.cashoutLoading = true;
+      try {
+        const collectionRef = collection(db, "cashout");
+        const q = query(collectionRef, where("status", "==", "approved"));
+
+        const querySnapShot = await getDocs(q);
+
+        const docSnap = [];
+        querySnapShot.forEach((doc) => {
+          return docSnap.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+
+        this.cashoutList = docSnap;
+        this.cashoutLoading = false;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getDeclinedWithraws() {
+      this.cashoutLoading = true;
+      try {
+        const collectionRef = collection(db, "cashout");
+        const q = query(collectionRef, where("status", "==", "declined"));
+
+        const querySnapShot = await getDocs(q);
+
+        const docSnap = [];
+        querySnapShot.forEach((doc) => {
+          return docSnap.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+
+        this.cashoutList = docSnap;
+        this.cashoutLoading = false;
+      } catch (error) {
+        console.error(error);
       }
     },
     openCashoutRequest(item) {

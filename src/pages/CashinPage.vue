@@ -5,7 +5,27 @@
     </div>
     <div v-else>
       <div class="q-pa-md">
+        <div class="q-pa-md bg-primary">
+          <q-tabs class="bg-warning text-warning" align="justify">
+            <q-tab
+              label="Pending Deposits"
+              class="bg-secondary"
+              @click="getPendingDeposits"
+            />
+            <q-tab
+              label="Approved Deposits"
+              class="bg-secondary"
+              @click="getApprovedDeposits"
+            />
+            <q-tab
+              label="Declined Deposits"
+              class="bg-secondary"
+              @click="getDeclinedDeposits"
+            />
+          </q-tabs>
+        </div>
         <q-table
+          title="Deposits"
           :columns="cashinColumn"
           :rows="cashinList"
           :pagination="pagination"
@@ -119,13 +139,16 @@ const {
 } = storeToRefs(cashStore);
 const {
   getCashinRequests,
+  getPendingDeposits,
+  getApprovedDeposits,
+  getDeclinedDeposits,
   openCashinRequest,
   approveCashinRequest,
   openApproveCashinRequest,
 } = cashStore;
 
 onMounted(() => {
-  getCashinRequests();
+  getPendingDeposits();
 });
 </script>
 

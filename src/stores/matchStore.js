@@ -52,6 +52,45 @@ export const useMatchStore = defineStore("match", {
         style: "width: 100px",
       },
     ],
+    matchClosedColumn: [
+      {
+        name: "id",
+        align: "center",
+        label: "Match ID",
+        field: "id",
+      },
+      {
+        name: "host",
+        align: "center",
+        label: "Host",
+        field: "host",
+      },
+      {
+        name: "challenger",
+        align: "center",
+        label: "Challenger",
+        field: "challenger",
+      },
+      {
+        name: "bet",
+        align: "center",
+        label: "Bet",
+        field: "bet",
+      },
+      {
+        name: "status",
+        align: "center",
+        label: "status",
+        field: "status",
+      },
+      {
+        name: "actions",
+        field: "actions",
+        label: "ACTIONS",
+        align: "center",
+        style: "width: 100px",
+      },
+    ],
     pagination: {
       page: 1,
       rowsPerPage: 15,
@@ -67,6 +106,7 @@ export const useMatchStore = defineStore("match", {
 
   actions: {
     async getMatchPending() {
+      this.matchLoading = true;
       try {
         const collectionRef = collection(db, "matches");
         const q = query(collectionRef, where("status", "==", "Pending"));
@@ -81,8 +121,48 @@ export const useMatchStore = defineStore("match", {
         });
 
         this.matchList = matchData;
-        console.log("match data:", matchData);
-        console.log("match list:", this.matchList);
+        this.matchLoading = false;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    async getMatchClosed() {
+      this.matchLoading = true;
+      try {
+        const collectionRef = collection(db, "matches");
+        const q = query(collectionRef, where("status", "==", "Closed"));
+
+        const querySnapshot = await getDocs(q);
+        const matchData = [];
+        querySnapshot.forEach((doc) => {
+          return matchData.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        this.matchList = matchData;
+        this.matchLoading = false;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getMatchOpen() {
+      this.matchLoading = true;
+      try {
+        const collectionRef = collection(db, "matches");
+        const q = query(collectionRef, where("status", "==", "Open"));
+
+        const querySnapshot = await getDocs(q);
+        const matchData = [];
+        querySnapshot.forEach((doc) => {
+          return matchData.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        this.matchList = matchData;
+        this.matchLoading = false;
       } catch (error) {
         console.error(error);
       }

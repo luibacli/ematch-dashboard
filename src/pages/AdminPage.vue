@@ -1,5 +1,7 @@
 <template>
-  <div>This is admin</div>
+  <q-page>
+    <div>This is admin</div>
+  </q-page>
 </template>
 
 <script setup></script>
