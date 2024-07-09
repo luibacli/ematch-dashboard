@@ -2,6 +2,7 @@
   <q-page>
     <div class="q-pa-md">
       <q-table
+        title="Users"
         :columns="userColumn"
         :rows="users"
         :pagination="pagination"
