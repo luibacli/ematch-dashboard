@@ -23,7 +23,6 @@ const { users, userColumn, pagination } = storeToRefs(userStore);
 const { getUsers } = userStore;
 onMounted(() => {
   getUsers();
-  console.log(users);
 });
 </script>
 

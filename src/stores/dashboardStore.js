@@ -9,6 +9,7 @@ export const useDashboardStore = defineStore("dashboard", {
     matches: 0,
     deposits: 0,
     withdraws: 0,
+    earnings: 0,
   }),
   actions: {
     async getTotalUsers() {
@@ -22,8 +23,17 @@ export const useDashboardStore = defineStore("dashboard", {
             ...doc.data(),
           });
         });
+        let totalEarnings = 0;
+        let earningsData = [];
         this.users = usersData.length;
-        console.log("number of users:", this.users);
+        usersData.forEach((doc) => {
+          return earningsData.push(doc.fees);
+        });
+
+        earningsData.forEach((i) => {
+          return (totalEarnings += i);
+        });
+        this.earnings = totalEarnings;
       } catch (error) {
         console.error(error);
       }
@@ -62,10 +72,16 @@ export const useDashboardStore = defineStore("dashboard", {
           });
         });
         let getTotalDeposits = 0;
+        let totalDeposits = [];
         depositData.forEach((doc) => {
-          return (getTotalDeposits = doc.amount++);
+          return totalDeposits.push(doc.amount);
+        });
+
+        totalDeposits.forEach((i) => {
+          getTotalDeposits += Number(i);
         });
         this.deposits = getTotalDeposits;
+        console.log(totalDeposits);
       } catch (error) {
         console.error(error);
       }
@@ -86,9 +102,14 @@ export const useDashboardStore = defineStore("dashboard", {
           });
         });
         let getTotalWithdraw = 0;
+        let totalWithdraw = [];
         withdrawData.forEach((doc) => {
-          return (getTotalWithdraw = doc.amount++);
+          return totalWithdraw.push(doc.amount);
         });
+        totalWithdraw.forEach((i) => {
+          getTotalWithdraw += Number(i);
+        });
+
         this.withdraws = getTotalWithdraw;
       } catch (error) {
         console.error(error);

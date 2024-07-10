@@ -191,7 +191,11 @@ export const useMatchStore = defineStore("match", {
         const data = userSnap.data();
         const matchBet = Number(this.matchData.totalBet);
         const playerBalance = Number(data.balance);
-        const newBalance = matchBet + playerBalance;
+        const prevFees = Number(data.fees);
+        const fees = matchBet * 0.05;
+        const newFees = prevFees + fees;
+        const playerWin = matchBet - fees;
+        const newBalance = playerWin + playerBalance;
         await updateDoc(docRef, {
           status: "Closed",
           winner: `${this.matchData.host}`,
@@ -201,6 +205,7 @@ export const useMatchStore = defineStore("match", {
           isHost: false,
           currentMatchId: "",
           balance: newBalance,
+          fees: newFees,
           hasPendingMatch: false,
         });
         await updateDoc(challengerRef, {
@@ -215,6 +220,11 @@ export const useMatchStore = defineStore("match", {
         });
         this.winHostDialog = false;
         this.matchDialog = false;
+        console.log("fees:", fees);
+        console.log("new fees:", newFees);
+        console.log("player balance", playerBalance);
+        console.log("player wins:", playerWin);
+        console.log("new balance:", newBalance);
         this.matchLoading = false;
       } catch (error) {
         console.error(error);
@@ -227,11 +237,15 @@ export const useMatchStore = defineStore("match", {
         const docRef = doc(db, "matches", this.matchData.id);
         const userRef = doc(db, "users", this.matchData.userRef);
         const challengerRef = doc(db, "users", this.matchData.challengerRef);
-        const userSnap = await getDoc(userRef);
+        const userSnap = await getDoc(challengerRef);
         const data = userSnap.data();
         const matchBet = Number(this.matchData.totalBet);
         const playerBalance = Number(data.balance);
-        const newBalance = matchBet + playerBalance;
+        const prevFees = Number(data.fees);
+        const fees = matchBet * 0.05;
+        const newFees = prevFees + fees;
+        const playerWin = matchBet - fees;
+        const newBalance = playerWin + playerBalance;
         await updateDoc(docRef, {
           status: "Closed",
           winner: `${this.matchData.challenger}`,
@@ -241,6 +255,7 @@ export const useMatchStore = defineStore("match", {
           isChallenger: false,
           currentMatchId: "",
           balance: newBalance,
+          fees: newFees,
           hasPendingMatch: false,
         });
 
@@ -256,6 +271,12 @@ export const useMatchStore = defineStore("match", {
         });
         this.winChallengerDialog = false;
         this.matchDialog = false;
+
+        console.log("fees:", fees);
+        console.log("new fees:", newFees);
+        console.log("player balance", playerBalance);
+        console.log("player wins:", playerWin);
+        console.log("new balance:", newBalance);
         this.matchLoading = false;
       } catch (error) {
         console.error(error);
