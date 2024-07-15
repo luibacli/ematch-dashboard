@@ -188,7 +188,9 @@ export const useMatchStore = defineStore("match", {
         const userRef = doc(db, "users", this.matchData.userRef);
         const challengerRef = doc(db, "users", this.matchData.challengerRef);
         const userSnap = await getDoc(userRef);
+        const challengerSnap = await getDoc(challengerRef);
         const data = userSnap.data();
+        const challengerData = challengerSnap.data();
         const matchBet = Number(this.matchData.totalBet);
         const playerBalance = Number(data.balance);
         const prevFees = Number(data.fees);
@@ -196,12 +198,21 @@ export const useMatchStore = defineStore("match", {
         const newFees = prevFees + fees;
         const playerWin = matchBet - fees;
         const newBalance = playerWin + playerBalance;
+
+        // host ref win calc
+        const hostWins = Number(data.wins);
+        const newHostWins = hostWins + 1;
+
+        // challenger ref loss calc
+        const challengerLoss = Number(challengerData.loss);
+        const newChallengerLoss = challengerLoss + 1;
         await updateDoc(docRef, {
           status: "Closed",
           winner: `${this.matchData.host}`,
           winnerId: `${this.matchData.userRef}`,
         });
         await updateDoc(userRef, {
+          wins: newHostWins,
           isHost: false,
           currentMatchId: "",
           balance: newBalance,
@@ -209,6 +220,7 @@ export const useMatchStore = defineStore("match", {
           hasPendingMatch: false,
         });
         await updateDoc(challengerRef, {
+          loss: newChallengerLoss,
           isChallenger: false,
           currentMatchId: "",
           hasPendingMatch: false,
@@ -220,11 +232,6 @@ export const useMatchStore = defineStore("match", {
         });
         this.winHostDialog = false;
         this.matchDialog = false;
-        console.log("fees:", fees);
-        console.log("new fees:", newFees);
-        console.log("player balance", playerBalance);
-        console.log("player wins:", playerWin);
-        console.log("new balance:", newBalance);
         this.matchLoading = false;
       } catch (error) {
         console.error(error);
@@ -237,8 +244,12 @@ export const useMatchStore = defineStore("match", {
         const docRef = doc(db, "matches", this.matchData.id);
         const userRef = doc(db, "users", this.matchData.userRef);
         const challengerRef = doc(db, "users", this.matchData.challengerRef);
+        const hostSnap = await getDoc(userRef);
         const userSnap = await getDoc(challengerRef);
         const data = userSnap.data();
+        const hostData = hostSnap.data();
+
+        // balance calculation
         const matchBet = Number(this.matchData.totalBet);
         const playerBalance = Number(data.balance);
         const prevFees = Number(data.fees);
@@ -246,12 +257,22 @@ export const useMatchStore = defineStore("match", {
         const newFees = prevFees + fees;
         const playerWin = matchBet - fees;
         const newBalance = playerWin + playerBalance;
+
+        // challenger ref win and lose data calculation
+        const prevWins = Number(data.wins);
+        const newWins = prevWins + 1;
+
+        // host ref win and lose data calculation
+        const hostLoss = Number(hostData.loss);
+        const newHostLoss = hostLoss + 1;
+
         await updateDoc(docRef, {
           status: "Closed",
           winner: `${this.matchData.challenger}`,
           winnerId: `${this.matchData.challengerRef}`,
         });
         await updateDoc(challengerRef, {
+          wins: newWins,
           isChallenger: false,
           currentMatchId: "",
           balance: newBalance,
@@ -260,6 +281,7 @@ export const useMatchStore = defineStore("match", {
         });
 
         await updateDoc(userRef, {
+          loss: newHostLoss,
           isHost: false,
           currentMatchId: "",
           hasPendingMatch: false,
@@ -272,11 +294,6 @@ export const useMatchStore = defineStore("match", {
         this.winChallengerDialog = false;
         this.matchDialog = false;
 
-        console.log("fees:", fees);
-        console.log("new fees:", newFees);
-        console.log("player balance", playerBalance);
-        console.log("player wins:", playerWin);
-        console.log("new balance:", newBalance);
         this.matchLoading = false;
       } catch (error) {
         console.error(error);
